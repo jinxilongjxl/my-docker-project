@@ -32,6 +32,8 @@ steps:
     id: "push-latest"
     waitFor: ["build-docker-image"]
 
+logging: CLOUD_LOGGING_ONLY
+
 # 声明输出镜像（两个标签）
 images:
   - "gcr.io/${PROJECT_ID}/my-node-app:latest"
