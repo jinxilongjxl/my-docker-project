@@ -19,7 +19,13 @@ app.get("/health", (req, res) => {
   res.status(200).send("OK");
 });
 
-// 启动服务
-app.listen(PORT, () => {
-  console.log(`服务运行在 http://localhost:${PORT}`);
-});
+// 关键修复：仅在直接运行该文件时启动服务器（生产环境），测试时不启动
+if (require.main === module) {
+  // 启动服务（仅生产环境执行）
+  app.listen(PORT, () => {
+    console.log(`服务运行在 http://localhost:${PORT}`);
+  });
+}
+
+// 导出纯 Express App 实例（供测试使用）
+module.exports = app;

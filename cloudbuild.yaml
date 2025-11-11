@@ -20,8 +20,6 @@ steps:
     args: [
         "build",
         "-t",
-        "gcr.io/${PROJECT_ID}/my-node-app:${COMMIT_SHA}", # 内置变量：代码提交哈希
-        "-t",
         "gcr.io/${PROJECT_ID}/my-node-app:latest", # 同时打 latest 标签
         ".",
       ]
@@ -30,18 +28,12 @@ steps:
 
   # 步骤 4：推送镜像到 GCR
   - name: "gcr.io/cloud-builders/docker"
-    args: ["push", "gcr.io/${PROJECT_ID}/my-node-app:${COMMIT_SHA}"]
-    id: "push-commit-sha"
-    waitFor: ["build-docker-image"]
-
-  - name: "gcr.io/cloud-builders/docker"
     args: ["push", "gcr.io/${PROJECT_ID}/my-node-app:latest"]
     id: "push-latest"
     waitFor: ["build-docker-image"]
 
 # 声明输出镜像（两个标签）
 images:
-  - "gcr.io/${PROJECT_ID}/my-node-app:${COMMIT_SHA}"
   - "gcr.io/${PROJECT_ID}/my-node-app:latest"
 
 timeout: "900s"
