@@ -1,0 +1,47 @@
+# cloudbuild.yaml：构建 + 测试 + 推送
+steps:
+  # 步骤 1：安装所有依赖（包括开发依赖，用于测试）
+  - name: "node:18-alpine" # 使用 Node.js 18 镜像执行 npm 命令
+    args: ["npm", "install"] # 安装依赖
+    id: "install-dependencies"
+    dir: "." # 执行目录（项目根目录）
+    env:
+      - "NODE_ENV=development" # 开发环境，安装 devDependencies
+
+  # 步骤 2：执行单元测试（测试失败则构建终止）
+  - name: "node:18-alpine"
+    args: ["npm", "test"] # 执行测试脚本
+    id: "run-tests"
+    dir: "."
+    waitFor: ["install-dependencies"] # 依赖前一步安装依赖
+
+  # 步骤 3：构建 Docker 镜像（使用提交哈希作为标签，避免重复）
+  - name: "gcr.io/cloud-builders/docker"
+    args: [
+        "build",
+        "-t",
+        "gcr.io/${PROJECT_ID}/my-node-app:${COMMIT_SHA}", # 内置变量：代码提交哈希
+        "-t",
+        "gcr.io/${PROJECT_ID}/my-node-app:latest", # 同时打 latest 标签
+        ".",
+      ]
+    id: "build-docker-image"
+    waitFor: ["run-tests"] # 测试通过后才构建镜像
+
+  # 步骤 4：推送镜像到 GCR
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/${PROJECT_ID}/my-node-app:${COMMIT_SHA}"]
+    id: "push-commit-sha"
+    waitFor: ["build-docker-image"]
+
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/${PROJECT_ID}/my-node-app:latest"]
+    id: "push-latest"
+    waitFor: ["build-docker-image"]
+
+# 声明输出镜像（两个标签）
+images:
+  - "gcr.io/${PROJECT_ID}/my-node-app:${COMMIT_SHA}"
+  - "gcr.io/${PROJECT_ID}/my-node-app:latest"
+
+timeout: "900s"

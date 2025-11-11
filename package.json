@@ -1,0 +1,21 @@
+{
+  "name": "my-node-app",
+  "version": "1.0.0",
+  "description": "Cloud Build 演示项目",
+  "main": "server.js",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "test": "jest --forceExit"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
