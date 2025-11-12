@@ -60,6 +60,9 @@ steps:
       # 传递变量到 kubectl，让 deployment.yaml 能引用
       - "PROJECT_ID=${PROJECT_ID}"
       - "KUBECONFIG=/workspace/.kube/config" # kubectl 配置路径（Cloud Build 自动生成）
+      - "CLOUDSDK_COMPUTE_REGION=asia-east1" # 你的集群区域
+      - "CLOUDSDK_CONTAINER_CLUSTER=my-gke-cluster" # 你的集群名称
+      - "KUBECTL_VERSION=1.33"
 
 logs_bucket: "gs://hadoop-proj-001-cloudbuild-logs"
 
