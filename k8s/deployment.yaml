@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: my-node-app-container # 容器名称
-          image: gcr.io/${PROJECT_ID}/my-node-app:latest # 引用 Cloud Build 内置变量
+          image: gcr.io/hadoop-proj-001/my-node-app:latest # 引用 Cloud Build 内置变量
           ports:
             - containerPort: 3000 # 容器端口（与服务端口一致）
           resources:
