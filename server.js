@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // 根接口：访问返回欢迎信息
 app.get("/", (req, res) => {
   res.send(`
-    <h1>Hello Cloud Build v0111121!</h1>
+    <h1>Hello Cloud Build v01111211!</h1>
     <p>这是从 GCR 拉取的 Docker 镜像运行的服务</p>
     <p>项目 ID：${process.env.PROJECT_ID || "未配置"}</p>
   `);
