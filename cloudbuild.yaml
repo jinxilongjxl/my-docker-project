@@ -32,6 +32,35 @@ steps:
     id: "push-latest"
     waitFor: ["build-docker-image"]
 
+  # 步骤 5：连接 GKE 集群（获取 kubectl 配置）
+  - name: "gcr.io/cloud-builders/gcloud"
+    args: [
+        "container",
+        "clusters",
+        "get-credentials",
+        "my-gke-cluster",
+        "--region",
+        "asia-east1", # 集群所在区域（与创建时一致）
+        "--project",
+        "${PROJECT_ID}",
+      ]
+    id: "connect-gke-cluster"
+    waitFor: ["push-latest"] # 镜像推送完成后再连接
+
+  # 步骤 6：部署到 GKE（应用 K8s 配置）
+  - name: "gcr.io/cloud-builders/kubectl"
+    args: [
+        "apply",
+        "-f",
+        "k8s/deployment.yaml", # K8s 配置文件路径
+      ]
+    id: "deploy-to-gke"
+    waitFor: ["connect-gke-cluster"]
+    env:
+      # 传递变量到 kubectl，让 deployment.yaml 能引用
+      - "PROJECT_ID=${PROJECT_ID}"
+      - "KUBECONFIG=/workspace/.kube/config" # kubectl 配置路径（Cloud Build 自动生成）
+
 logs_bucket: "gs://hadoop-proj-001-cloudbuild-logs"
 
 # 声明输出镜像（两个标签）

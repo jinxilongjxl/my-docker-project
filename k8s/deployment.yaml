@@ -1,0 +1,52 @@
+# k8s/deployment.yaml：K8s 部署配置
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-node-app-deployment # Deployment 名称
+  labels:
+    app: my-node-app
+spec:
+  replicas: 2 # 运行 2 个 Pod 副本（高可用）
+  selector:
+    matchLabels:
+      app: my-node-app # 匹配 Pod 标签
+  template:
+    metadata:
+      labels:
+        app: my-node-app # Pod 标签
+    spec:
+      containers:
+        - name: my-node-app-container # 容器名称
+          image: gcr.io/${PROJECT_ID}/my-node-app:latest # 引用 Cloud Build 内置变量
+          ports:
+            - containerPort: 3000 # 容器端口（与服务端口一致）
+          resources:
+            limits:
+              cpu: "500m" # 限制 CPU 使用率（500 毫核）
+              memory: "512Mi" # 限制内存使用（512MB）
+          livenessProbe: # 存活探针（检测容器是否正常运行）
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5 # 启动后 5 秒开始检测
+            periodSeconds: 10 # 每 10 秒检测一次
+          readinessProbe: # 就绪探针（检测容器是否可提供服务）
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+---
+# 服务配置：暴露 Deployment 到集群外部
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-node-app-service
+spec:
+  type: LoadBalancer # 负载均衡类型（自动分配公网 IP）
+  selector:
+    app: my-node-app # 匹配 Deployment 的 Pod 标签
+  ports:
+    - port: 80 # 服务端口（外部访问用 80 端口）
+      targetPort: 3000 # 转发到 Pod 的 3000 端口
+      protocol: TCP
