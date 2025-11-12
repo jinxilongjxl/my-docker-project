@@ -21,11 +21,9 @@ spec:
           ports:
             - containerPort: 3000 # 容器端口（与服务端口一致）
           resources:
-            memory: "256Mi"
-            cpu: "100m"
             limits:
-              cpu: "500m" # 限制 CPU 使用率（500 毫核）
-              memory: "512Mi" # 限制内存使用（512MB）
+              cpu: "200m" # 限制 CPU 使用率（500 毫核）
+              memory: "256Mi" # 限制内存使用（512MB）
           livenessProbe: # 存活探针（检测容器是否正常运行）
             httpGet:
               path: /health
