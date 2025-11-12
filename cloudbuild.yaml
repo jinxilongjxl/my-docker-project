@@ -70,4 +70,4 @@ logs_bucket: "gs://hadoop-proj-001-cloudbuild-logs"
 images:
   - "gcr.io/${PROJECT_ID}/my-node-app:latest"
 
-timeout: "900s"
+timeout: "1800s"

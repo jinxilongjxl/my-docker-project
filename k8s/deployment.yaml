@@ -21,6 +21,8 @@ spec:
           ports:
             - containerPort: 3000 # 容器端口（与服务端口一致）
           resources:
+            memory: "256Mi"
+            cpu: "100m"
             limits:
               cpu: "500m" # 限制 CPU 使用率（500 毫核）
               memory: "512Mi" # 限制内存使用（512MB）
