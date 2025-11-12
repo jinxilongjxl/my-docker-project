@@ -42,7 +42,7 @@ steps:
         "--region",
         "asia-east1", # 集群所在区域（与创建时一致）
         "--project",
-        "${PROJECT_ID}",
+        "hadoop-proj-001",
       ]
     id: "connect-gke-cluster"
     waitFor: ["push-latest"] # 镜像推送完成后再连接
